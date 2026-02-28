@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 
 namespace BuildingBlocks.CQRS
 {
@@ -8,6 +8,4 @@ namespace BuildingBlocks.CQRS
         where TResponse : notnull
     {
     }
-
-
 }

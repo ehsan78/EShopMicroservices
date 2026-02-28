@@ -1,6 +1,38 @@
-﻿namespace Catalog.API.Products.CreateProduct
+using Carter;
+using Catalog.API.Models;
+using Mapster;
+using MediatR;
+
+namespace Catalog.API.Products.CreateProduct
 {
-    public class CreateProductEndpoint
+    public record CreateProductRequest(
+        string Name,
+        string Description,
+        decimal Price,
+        string ImageFile
+    );
+
+    public record CreateProductResponse(
+        Guid Id
+    );
+    public class CreateProductEndpoint : ICarterModule
     {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            // Define a route for creating a product
+            app.MapPost("/products", async (CreateProductRequest request, ISender sender) =>
+                {
+                    CreateProductCommand command = request.Adapt<CreateProductCommand>();
+                    CreateProductResult product = await sender.Send(command);
+                    return Results.Created($"/products/{product.Id}", product);
+                })
+                .WithName("CreateProduct")
+                .Produces<CreateProductResponse>(StatusCodes.Status201Created)
+                .ProducesProblem(StatusCodes.Status400BadRequest)
+                .WithSummary("Creates a new product")
+                .WithDescription("Creates a new product with the specified details")
+                ;
+
+        }
     }
 }
