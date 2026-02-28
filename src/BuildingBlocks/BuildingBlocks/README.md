@@ -1,14 +1,14 @@
-# BuildingBlocks
+# BuildingBlocks Class Library
 
-The **BuildingBlocks** library is a shared class library providing reusable CQRS (Command Query Responsibility Segregation) abstractions for use across all microservices in the EShopMicroservices solution.
+A shared class library that provides common cross-cutting abstractions and utilities used across the microservices in the EShopMicroservices solution.
+
+---
 
 ## Overview
 
-| Attribute | Value |
-|-----------|-------|
-| Framework | .NET 8.0 |
-| Purpose | Shared CQRS interfaces and utilities |
-| Key Dependencies | MediatR 14, Mapster 7 |
+The **BuildingBlocks** library centralises reusable infrastructure concerns so that every microservice can depend on the same well-tested contracts instead of re-implementing them.  Currently it ships a full set of **CQRS** (Command Query Responsibility Segregation) interfaces built on top of [MediatR](https://github.com/jbogard/MediatR).
+
+---
 
 ## Project Structure
 
@@ -21,60 +21,90 @@ BuildingBlocks/
     └── IQueryHandler.cs     # Query handler interface
 ```
 
-## CQRS Abstractions
+---
 
-This library wraps [MediatR](https://github.com/jbogard/MediatR) with strongly-typed interfaces that enforce a clear separation between commands (write operations) and queries (read operations).
+## CQRS Interfaces
 
 ### Commands
 
-A **command** represents a write operation that changes state. Commands may or may not return a response value.
+Commands represent an intent to **change state**.  Two overloads are provided:
+
+| Interface | Description |
+|-----------|-------------|
+| `ICommand` | A command that returns no meaningful result (`MediatR.Unit`). |
+| `ICommand<TResponse>` | A command that returns a typed response. |
 
 ```csharp
-// Command with no return value (returns Unit)
-public interface ICommand : ICommand<Unit> { }
+// A command with no return value
+public record DeleteProductCommand(Guid ProductId) : ICommand;
 
-// Command with a return value
-public interface ICommand<out TResponse> : IRequest<TResponse> { }
+// A command that returns a result
+public record CreateProductCommand(string Name, decimal Price) : ICommand<CreateProductResult>;
 ```
 
-#### ICommandHandler
+### Command Handlers
+
+| Interface | Description |
+|-----------|-------------|
+| `ICommandHandler<TCommand>` | Handles a `ICommand` (no return value). |
+| `ICommandHandler<TCommand, TResponse>` | Handles a `ICommand<TResponse>` and returns `TResponse`. |
 
 ```csharp
-// Handle a command with no return value
-public interface ICommandHandler<in TCommand>
-    : IRequestHandler<TCommand, Unit>
-    where TCommand : ICommand { }
-
-// Handle a command with a return value
-public interface ICommandHandler<in TCommand, TResponse>
-    : IRequestHandler<TCommand, TResponse>
-    where TCommand : ICommand<TResponse>
-    where TResponse : notnull { }
+public class CreateProductHandler : ICommandHandler<CreateProductCommand, CreateProductResult>
+{
+    public async Task<CreateProductResult> Handle(
+        CreateProductCommand command, CancellationToken cancellationToken)
+    {
+        // implementation
+        return new CreateProductResult(Guid.NewGuid());
+    }
+}
 ```
 
 ### Queries
 
-A **query** represents a read operation that returns data without modifying state.
+Queries represent a request to **read state** without modifying it.
+
+| Interface | Description |
+|-----------|-------------|
+| `IQuery<TResponse>` | A query that returns a non-null typed response. |
 
 ```csharp
-public interface IQuery<out TResponse> : IRequest<TResponse>
-    where TResponse : notnull { }
+public record GetProductByIdQuery(Guid ProductId) : IQuery<GetProductByIdResult>;
 ```
 
-#### IQueryHandler
+### Query Handlers
+
+| Interface | Description |
+|-----------|-------------|
+| `IQueryHandler<TQuery, TResponse>` | Handles a `IQuery<TResponse>` and returns `TResponse`. |
 
 ```csharp
-public interface IQueryHandler<in TQuery, TResponse>
-    : IRequestHandler<TQuery, TResponse>
-    where TQuery : IQuery<TResponse>
-    where TResponse : notnull { }
+public class GetProductByIdHandler : IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
+{
+    public async Task<GetProductByIdResult> Handle(
+        GetProductByIdQuery query, CancellationToken cancellationToken)
+    {
+        // implementation
+        return new GetProductByIdResult(product);
+    }
+}
 ```
 
-## Usage
+---
 
-### 1. Reference the library
+## Dependencies
 
-Add a project reference to `BuildingBlocks` in your microservice `.csproj`:
+| Package | Version | Purpose |
+|---------|---------|---------|
+| [MediatR](https://www.nuget.org/packages/MediatR) | 14.x | In-process messaging / mediator pattern |
+| [Mapster](https://www.nuget.org/packages/Mapster) | 7.x | High-performance object mapping |
+
+---
+
+## Getting Started
+
+1. **Add a project reference** in your microservice's `.csproj`:
 
 ```xml
 <ItemGroup>
@@ -82,66 +112,17 @@ Add a project reference to `BuildingBlocks` in your microservice `.csproj`:
 </ItemGroup>
 ```
 
-### 2. Define a command
+2. **Register MediatR** in your service's `Program.cs`:
 
 ```csharp
-using BuildingBlocks.CQRS;
-
-public record CreateProductCommand(string Name, decimal Price)
-    : ICommand<CreateProductResult>;
-
-public record CreateProductResult(Guid ProductId);
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 ```
 
-### 3. Implement the handler
+3. **Implement a command or query** using the interfaces from `BuildingBlocks.CQRS` and dispatch it via `ISender`/`IMediator`.
 
-```csharp
-using BuildingBlocks.CQRS;
+---
 
-public class CreateProductHandler
-    : ICommandHandler<CreateProductCommand, CreateProductResult>
-{
-    public async Task<CreateProductResult> Handle(
-        CreateProductCommand command, CancellationToken cancellationToken)
-    {
-        // business logic here
-        var id = Guid.NewGuid();
-        return new CreateProductResult(id);
-    }
-}
-```
+## Target Framework
 
-### 4. Define a query
-
-```csharp
-using BuildingBlocks.CQRS;
-
-public record GetProductByIdQuery(Guid ProductId)
-    : IQuery<GetProductByIdResult>;
-
-public record GetProductByIdResult(Guid ProductId, string Name, decimal Price);
-```
-
-### 5. Implement the query handler
-
-```csharp
-using BuildingBlocks.CQRS;
-
-public class GetProductByIdHandler
-    : IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
-{
-    public async Task<GetProductByIdResult> Handle(
-        GetProductByIdQuery query, CancellationToken cancellationToken)
-    {
-        // data retrieval logic here
-        return new GetProductByIdResult(query.ProductId, "Sample Product", 9.99m);
-    }
-}
-```
-
-## Dependencies
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| [MediatR](https://github.com/jbogard/MediatR) | 14.0.0 | In-process messaging and request/response pipeline |
-| [Mapster](https://github.com/MapsterMapper/Mapster) | 7.4.0 | Fast, convention-based object mapping |
+- **.NET 8.0**
