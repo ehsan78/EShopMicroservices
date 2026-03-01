@@ -12,7 +12,7 @@ namespace Catalog.API.Products.CreateProduct
 
     public record CreateProductResult(Guid Id);
 
-    public class CreateProductCommandHandler
+    public class CreateProductCommandHandler (IDocumentSession session)
         : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         // ReSharper disable once AsyncMethodWithoutAwait
@@ -20,12 +20,14 @@ namespace Catalog.API.Products.CreateProduct
         {
             var product = new Product
             {
-                ProductId = Guid.NewGuid(),
                 Name = command.Name,
                 Description = command.Description,
                 Price = command.Price,
                 ImageFile = command.ImageFile
             };
+
+            session.Store(product);
+            await session.SaveChangesAsync(cancellationToken);
 
             return new CreateProductResult(product.ProductId);
 
