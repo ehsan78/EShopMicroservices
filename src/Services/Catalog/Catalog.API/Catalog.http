@@ -1,0 +1,73 @@
+### Catalog API - HTTP Requests
+### Base URLs
+@baseUrl_local = http://localhost:5000
+@baseUrl_docker = http://localhost:6000
+@baseUrl_https_local = https://localhost:5050
+@baseUrl_https_docker = https://localhost:6060
+
+### Choose your environment (change @baseUrl to switch)
+@baseUrl = {{baseUrl_https_local}}
+
+###############################################
+### Product Endpoints
+###############################################
+
+### Create Product
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "iPhone 14 Pro",
+  "description": "Latest Apple smartphone with A16 Bionic chip, Dynamic Island, and Pro camera system",
+  "price": 999.99,
+  "imageFile": "iphone14pro.jpg"
+}
+
+###
+
+### Create Product - Samsung Galaxy
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Samsung Galaxy S23 Ultra",
+  "description": "Premium Android smartphone with 200MP camera and S Pen",
+  "price": 1199.99,
+  "imageFile": "galaxys23ultra.jpg"
+}
+
+###
+
+### Create Product - MacBook Pro
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "MacBook Pro 16-inch M3",
+  "description": "Professional laptop with M3 chip, 16-inch Liquid Retina XDR display",
+  "price": 2499.99,
+  "imageFile": "macbookpro16.jpg"
+}
+
+###
+
+### Create Product - Invalid Request (Missing Required Fields)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This should fail validation",
+  "price": -10.00,
+  "imageFile": ""
+}
+
+###
+
+### Health Check (if available)
+GET {{baseUrl}}/health
+
+###
+
+### Swagger UI (Open in browser)
+# Open: {{baseUrl}}/swagger

@@ -29,7 +29,7 @@ namespace Catalog.API.Products.CreateProduct
             session.Store(product);
             await session.SaveChangesAsync(cancellationToken);
 
-            return new CreateProductResult(product.ProductId);
+            return new CreateProductResult(product.Id);
 
         }
     }
