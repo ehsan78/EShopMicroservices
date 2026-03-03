@@ -12,6 +12,32 @@
 ### Product Endpoints
 ###############################################
 
+### Get All Products
+GET {{baseUrl}}/products
+
+###
+
+### Get All Products (Verbose - Check if it returns empty array)
+# @name getAllProducts
+GET {{baseUrl}}/products
+Accept: application/json
+
+###
+
+### Create Product - Test Item (Create this first!)
+# @name createTestProduct
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Test Product",
+  "description": "This is a test product to verify the endpoint is working",
+  "price": 99.99,
+  "imageFile": "test.jpg"
+}
+
+###
+
 ### Create Product
 POST {{baseUrl}}/products
 Content-Type: application/json
