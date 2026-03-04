@@ -24,6 +24,42 @@ Accept: application/json
 
 ###
 
+### Get Product By ID
+# @name getProductById
+GET {{baseUrl}}/products/{{productId}}
+
+### NOTE: Replace {{productId}} with an actual GUID from a created product
+### Or use the productId from a previous create request
+
+###
+
+### Get Product By ID - Example with Sample GUID
+GET {{baseUrl}}/products/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+###
+
+### Get Products By Category
+# @name getProductsByCategory
+GET {{baseUrl}}/products/category/Electronics
+
+###
+
+### Get Products By Category - Smartphones
+GET {{baseUrl}}/products/category/Smartphones
+
+###
+
+### Get Products By Category - Laptops
+GET {{baseUrl}}/products/category/Laptops
+
+###
+
+### Get Products By Category - Example with Variable
+@categoryName = Electronics
+GET {{baseUrl}}/products/category/{{categoryName}}
+
+###
+
 ### Create Product - Test Item (Create this first!)
 # @name createTestProduct
 POST {{baseUrl}}/products
@@ -31,6 +67,7 @@ Content-Type: application/json
 
 {
   "name": "Test Product",
+  "category": ["Electronics", "Gadgets"],
   "description": "This is a test product to verify the endpoint is working",
   "price": 99.99,
   "imageFile": "test.jpg"
@@ -38,12 +75,19 @@ Content-Type: application/json
 
 ###
 
-### Create Product
+### Get Product By ID - Use ID from Created Test Product
+@testProductId = {{createTestProduct.response.body.id}}
+GET {{baseUrl}}/products/{{testProductId}}
+
+###
+
+### Create Product - iPhone
 POST {{baseUrl}}/products
 Content-Type: application/json
 
 {
   "name": "iPhone 14 Pro",
+  "category": ["Smartphones", "Electronics", "Apple"],
   "description": "Latest Apple smartphone with A16 Bionic chip, Dynamic Island, and Pro camera system",
   "price": 999.99,
   "imageFile": "iphone14pro.jpg"
@@ -57,6 +101,7 @@ Content-Type: application/json
 
 {
   "name": "Samsung Galaxy S23 Ultra",
+  "category": ["Smartphones", "Electronics", "Samsung"],
   "description": "Premium Android smartphone with 200MP camera and S Pen",
   "price": 1199.99,
   "imageFile": "galaxys23ultra.jpg"
@@ -70,6 +115,7 @@ Content-Type: application/json
 
 {
   "name": "MacBook Pro 16-inch M3",
+  "category": ["Laptops", "Electronics", "Apple"],
   "description": "Professional laptop with M3 chip, 16-inch Liquid Retina XDR display",
   "price": 2499.99,
   "imageFile": "macbookpro16.jpg"

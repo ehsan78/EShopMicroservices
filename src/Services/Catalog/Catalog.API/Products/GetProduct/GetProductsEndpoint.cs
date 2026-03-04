@@ -5,9 +5,9 @@ using MediatR;
 
 namespace Catalog.API.Products.GetProduct
 {
-    public record GetProductsResponse(IEnumerable<Product> Products);
+    public record GetProductResponse(IEnumerable<Product> Products);
 
-    public class GetProductsEndpoint : ICarterModule
+    public class GetProductEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
@@ -15,7 +15,7 @@ namespace Catalog.API.Products.GetProduct
                 {
                     GetProductQuery query = new GetProductQuery();
                     GetProductResult result = await sender.Send(query);
-                    GetProductsResponse response = result.Adapt<GetProductsResponse>();
+                    GetProductResponse response = result.Adapt<GetProductResponse>();
                     return Results.Ok(response);
                 })
                 .WithName("GetProducts")

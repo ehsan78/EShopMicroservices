@@ -7,6 +7,7 @@ namespace Catalog.API.Products.CreateProduct
         string Name,
         string Description,
         decimal Price,
+        List<string> Category,
         string ImageFile
     ) : ICommand<CreateProductResult>;
 
@@ -21,6 +22,7 @@ namespace Catalog.API.Products.CreateProduct
             var product = new Product
             {
                 Name = command.Name,
+                Category = command.Category,
                 Description = command.Description,
                 Price = command.Price,
                 ImageFile = command.ImageFile
