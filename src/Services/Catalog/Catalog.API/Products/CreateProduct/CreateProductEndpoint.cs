@@ -1,5 +1,4 @@
 using Carter;
-using Catalog.API.Models;
 using Mapster;
 using MediatR;
 
@@ -16,7 +15,7 @@ namespace Catalog.API.Products.CreateProduct
     public record CreateProductResponse(
         Guid Id
     );
-    public class CreateProductEndpoint : ICarterModule
+    public class UpdateProductEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {

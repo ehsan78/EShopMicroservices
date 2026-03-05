@@ -136,6 +136,76 @@ Content-Type: application/json
 
 ###
 
+###############################################
+### Update Product Endpoint
+###############################################
+
+### Update Product - Test Product (Use ID from created product)
+# @name updateTestProduct
+PUT {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "id": "{{testProductId}}",
+  "name": "Updated Test Product",
+  "category": ["Electronics", "Gadgets", "Updated"],
+  "description": "This product has been updated",
+  "price": 149.99,
+  "imageFile": "updated-test.jpg"
+}
+
+###
+
+### Update Product - Example with Specific GUID
+PUT {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "Updated Product Name",
+  "category": ["Electronics", "Premium"],
+  "description": "Updated product description",
+  "price": 199.99,
+  "imageFile": "updated-product.jpg"
+}
+
+###
+
+### Update Product - iPhone (Update price)
+PUT {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "id": "REPLACE-WITH-IPHONE-ID",
+  "name": "iPhone 14 Pro - Discounted",
+  "category": ["Smartphones", "Electronics", "Apple", "Sale"],
+  "description": "Latest Apple smartphone with A16 Bionic chip, Dynamic Island, and Pro camera system - NOW ON SALE!",
+  "price": 899.99,
+  "imageFile": "iphone14pro.jpg"
+}
+
+###
+
+###############################################
+### Delete Product Endpoint
+###############################################
+
+### Delete Product - By ID Variable
+# @name deleteProduct
+DELETE {{baseUrl}}/products/{{testProductId}}
+
+###
+
+### Delete Product - Example with Specific GUID
+DELETE {{baseUrl}}/products/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+###
+
+### Delete Product - By ID (Replace with actual ID)
+DELETE {{baseUrl}}/products/REPLACE-WITH-PRODUCT-ID
+
+###
+
 ### Health Check (if available)
 GET {{baseUrl}}/health
 

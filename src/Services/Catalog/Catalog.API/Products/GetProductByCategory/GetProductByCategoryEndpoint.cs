@@ -1,5 +1,4 @@
 ﻿using Carter;
-using Catalog.API.Models;
 using Mapster;
 using MediatR;
 

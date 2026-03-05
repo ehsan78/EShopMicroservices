@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.CQRS;
-using Catalog.API.Models;
-using Marten.Linq.QueryHandlers;
+﻿using Marten.Linq.QueryHandlers;
 
 namespace Catalog.API.Products.GetProduct
 {
