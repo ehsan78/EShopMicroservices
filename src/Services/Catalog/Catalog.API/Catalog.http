@@ -66,7 +66,7 @@ POST {{baseUrl}}/products
 Content-Type: application/json
 
 {
-  "name": "Test Product",
+  "name": "",
   "category": ["Electronics", "Gadgets"],
   "description": "This is a test product to verify the endpoint is working",
   "price": 99.99,
